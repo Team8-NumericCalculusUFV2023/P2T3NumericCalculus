@@ -1,4 +1,4 @@
-function x = gauss_jordan(A, b)
+function x = GaussJordan(A,b)
 % Función que permite calcular la solución aproximada de un sistema lineal.
 % El algoritmo utilizado es el Método de eliminación Gauss-Jordan.
 % Inputs: 

@@ -1,5 +1,4 @@
-function G = cholesky(A)
-% blablabla
+function G = Cholesky(A)
     [f, c] = size(A);
     G = zeros(f, c);
     for i=1: f
