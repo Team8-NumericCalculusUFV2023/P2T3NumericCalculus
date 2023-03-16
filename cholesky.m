@@ -1,10 +1,18 @@
 function G = Cholesky(A)
-    [f, c] = size(A);
-    G = zeros(f, c);
-    for i=1: f
-        G(i, i) = sqrt(A(i, i) - G(i, :)*G(i, :)');
-        for j=i+1: f
-            G(j, i) = (A(j, i) - G(i,:)*G(j ,:)')/G(i, i);
+
+
+n = size(A,1);
+G = triu(n);
+
+for j=1:n
+    for k=1:j-1
+        A(j,j) = A(j,j) - G(k,j)^2;
+    end
+    G(j,j) = sqrt(A(j,j));
+    for i=j+1:n
+        for k=1:j-1
+            A(i,j) = A(i,j) - G(k,i)*G(k,j);
         end
+        G(j,i) = A(i,j)/G(j,j);
     end
 end
