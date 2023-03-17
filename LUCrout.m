@@ -5,11 +5,9 @@ function [L, U] = LUCrout(A)
 % Outputs:
 %       - L: matriz triangular inferior
 %       - U: matriz triangular superior
-
 [n, ~] = size(A);
 L = zeros(n);
 U = eye(n);
-
 for j = 1:n
     % Calcular elementos de la matriz L
     for i = j:n

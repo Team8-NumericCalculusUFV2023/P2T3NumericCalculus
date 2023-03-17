@@ -6,7 +6,8 @@ function [x, itr] = Gauss_Seidel(A,b,tol)
 % OUTPUTS:
 %   x   = vector columna solución
 %   itr = indica el número de iteraciones realizadas
-
+% El error se calcula como el valor absoluto de la diferencia entre
+% iteraciones partido de la iteración anterior.
     [F, Z] = size(A);
     % Paso 1: comprobamos si la matriz es cuadrada
     if F ~= Z

@@ -6,7 +6,7 @@ function x = GaussJordan(A,b)
 %       - A: matriz de coeficientes
 %       - b: vector columna de términos independientes
 % Outputs:
-%       - x: solución aproximada
+%       - x: vector columna solución aproximada
     
 % Se define la matriz ampliada
 Ab = [A, b];
