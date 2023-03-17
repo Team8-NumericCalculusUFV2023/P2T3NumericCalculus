@@ -7,7 +7,7 @@ function invA = inversaLU(A)
     % OUTPUTS:
     %   invA = matriz inversa de A
         [F, ~] = size(A);
-        [L, U] = LUcrout(A);
+        [L, U] = LUCrout(A);
         % Inicialización de variables
         B = eye(F);             % LUx = I 
         
