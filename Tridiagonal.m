@@ -1,56 +1,53 @@
 function x = Tridiagonal(A,b)
-% Función que busca la solución de un sistema de ecuaciones por el método
-% de Thomas.
+% Función que dada una matriz tridiagonal A y un vector de términos
+% independientes b realiza el ALgoritmo de Thomas para resolver el sistema.
+%
+% Variables de entrada
+%   A = matriz tridiagonal
+%   b = vector columna
+%
+% Variables de salida
+%   x = vector con las soluciones del sistema
 
-% INPUTS:
-% A = matriz de coeficientes del sistema de ecuaciones
-% b = vector fila de términos independientes (es la columna traspuesta)
+% Cuerpo de la función:
 
-% OUTPUTS:
-% x = vector columna solución del sistema de ecuaciones
+% INICIALIZAMOS DATOS:
+[F,~] = size(A);  % Calculamos la dimensión de la matriz
+B = b;            % Guardamos en B los terminos indepepndientes
 
-    N=length(b); % Números de filas del vector independiente
-
-    % Vectores auxiliares
-    d=zeros(N,1);
-    u=zeros(N-1,1);
-    l=zeros(N,1);
-
-    if isbanded(A,1 ,1) % Se comprueba que la matriz es tridiagonal 
-        for i=1:N % Bucle que guarda las diagonales en un vector
-            d(i)=A(i,i); % Diagonal principal 
-            if i<=N-1
-                u(i)=A(i,i+1); % Diagonal superior
-            end
-            if i>=2
-                l(i)=A(i,i-1); % Diagonal inferior
-            end
-        end
-        % Matrices auxiliares
-        u_prima=zeros(N-1,1);
-        b_prima=zeros(N-1,1);
-        b_prima2=zeros(N,1);
-        % Coeficientes de la primera fila
-        u_prima(1)=u(1)/d(1);
-        b_prima(1)=b(1)/d(1);
-        % Se normalizan las filas y se restan con las del pivote anterior
-        for i=2:N-1
-            u_prima(i)=u(i)/(d(i)-l(i)*u_prima(i-1));
-            b_prima(i)=(b(i)-l(i)*b_prima(i-1))/(d(i)-l(i)*u_prima(i-1));
-        end 
-        b_prima2(1)=b_prima(1); 
-        for i= 2:N
-            b_prima2(i)=(b(i)-l(i)*b_prima(i-1))/(d(i)-l(i)*u_prima(i-1));
-        end   
-        % Sustitución hacia atrás.
-        x=b_prima2;
-        i=N-1;
-        while i>=1
-            x(i)= (b_prima2(i)-u_prima(i)*x(i+1));
-            i=i-1;
-        end
-        x=x*100;% Se pasa de metros a centímetros 
-    else 
-        disp('No se pudo realizar el algoritmo, matriz no tridiagonal')
+% COMPROBAMOS: isbanded() 
+for i = 2:F
+    d1 = diag(A,i);
+    d2 = diag(A,-i);
+    if norm(d1) + norm(d2) ~= 0 
+        error(' A no es tridiagonal');
     end
+end
+
+% PASO 1:
+d = diag(A);      % Guardamos la primera columna para tener el primer elemento guardado.
+a = diag(A,1);
+b = [0; diag(A,-1)];   % Vector que tendra primer elemento Nulo porque la dimension real es F-1.
+
+% PASO 2:
+a(1) = a(1) / d(1);    
+B(1) = B(1) / d(1); 
+
+% PASO 3:
+for i = 2:F-1 
+    a(i) = a(i) / (d(i) - b(i) * a(i-1));
+    B(i) = (B(i) - b(i) * B(i-1)) / (d(i) - b(i) * a(i-1)); 
+end
+
+% PASO 4:
+B(F) = (B(F) - b(F) * B(F-1))/(d(F) - b(F) * a(F-1));
+
+% PASO 5:
+x = zeros(F,1);
+
+x(F) = B(F);
+for i = F-1:-1:1
+    x(i) = B(i) - a(i)*x(i+1);
+end
+
 end
