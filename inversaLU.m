@@ -1,4 +1,4 @@
-function invA = inversaLU(A)
+function invA = InversaLU(A)
     % Calculo de la inversa de la matriz A mediante la descomposición LU.
     % Esta función llama a su vez a las funciones 
     % LUcrout, sustitución adelante (SubsAdel) y atrás (SubsAtras)
