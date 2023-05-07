@@ -1,51 +1,57 @@
-function [x, itr] = Gauss_Seidel(A,b,tol)
-% INPUTS:
-%   A   =  matriz (cuadrada) de coeficientes
-%   b   =  vector columna de términos independientes
-%   tol = la tolerancia o error relativo de la solución encontrada
-% OUTPUTS:
-%   x   = vector columna solución
-%   itr = indica el número de iteraciones realizadas
-% El error se calcula como el valor absoluto de la diferencia entre
-% iteraciones partido de la iteración anterior.
-    [F, Z] = size(A);
-    % Paso 1: comprobamos si la matriz es cuadrada
-    if F ~= Z
-        disp("ERROR: la matriz no es cuadrada")
-        return
-    end
-    % Paso 2: comprobamos si la matriz es diagonalmente dominante.
-    % Si los valores absolutos de la diag son mayores que el valor absoluto de la suma de cada
-    % columna, entonces es diagonalmente dominante.
-    sum = 0;
-    for i = 1:F
-        for j=1:F
-            if i ~= j
-                sum = sum + A(i,j);
-            end
-        end
-        % Se calcula el error relativo como el valor absoluto de la
-        % diferencia de la sol2 - sol1 entre la sol1
-        if abs(sum) > abs(A(i,i))     
-            disp("ERROR: la matriz no es diagonalmente dominante");
-            return
-        end
-        sum = 0;
-    end
-    
-    % Paso 3: tomo cero como valor de las variables en la primera iteración. 
-    x = zeros(F,1);
-    y = x + 1;
-    itr = 1;
-    
-    % Paso 4: itero hasta que el error relativo sea menor que la tolerancia
-    while abs((y-x)./y) > tol
-        y = x;
-        for i=1:F
-            x(i) = (1/A(i,i))*(b(i) - A(i,[1:i-1,i+1:F])*x([1:i-1,i+1:F]));
-        end
-        % Se suma 1 a itr por cada iteración
-        itr = itr + 1;
-    end
+function [x, itr] = Gauss_Seidel(A, b, tol)
+% Esta función resuelve un sistema de ecuaciones dada una matriz cuadrada 
+% A, un vector de términos independientes b y la tolerancia tol mediante el
+% método iterativo Gauss-Seidel.
+%
+% Variables de entrada:
+%   A = la matriz cuadrada de coeficientes
+%   b = vector columna de términos independientes
+%   tol = error relativo con la que se quiere calcular la solución
+%
+% Variables de salida:
+%   x = vector columna que contiene las soluciones
+%   itr = número de iteraciones con las que se ha calculado x
 
+% Cuerpo de la función:
+[F, C] = size(A);
+if F ~= C
+    error("La matriz introducida debe de ser cuadrada.")
+end
+
+dominante = true;
+for i = 1:C
+    suma = 0;
+    for j = 1:C
+        if j ~= i
+            suma = suma + abs(A(i,j));
+        end
+    end
+    if suma >= abs(A(i,i))
+        dominante = false;
+        break;
+    end
+end
+
+if dominante ~= true 
+    fprintf("La matriz debería ser diagonalmente dominante")
+end 
+
+x = zeros(F, 1);
+itr = 0;
+err = tol + 1;
+
+while err >= tol
+    w = x; % almacenar el vector solución anterior
+    suma1 = A(1, 2:F) * w(2:F);
+    x(1) = (b(1) - suma1) / A(1, 1);
+    for i = 2:F-1
+        suma1 = A(i,1:i-1) * x(1:i-1);
+        suma2 = A(i,i+1:F) * w(i+1:F);
+        x(i) = (b(i) - suma1 - suma2) / A(i,i);
+    end
+    suma3 = A(F, 1:F-1) * x(1:F-1);
+    x(F) = (b(F) - suma3) / A(F, F);
+    itr = itr + 1;
+    err = norm((x - w)/ x); % calcular el error relativo
+end
 end
